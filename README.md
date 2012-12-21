@@ -96,11 +96,9 @@ farJson: find DOM id="farJson", and request remote view data according value of 
 
 At cross domain side, reponse the swit remote request as below:
 
-    swit.callback([
-        {
-            "farJson" : "replaced string"
-        }
-    ]);
+    swit.callback({
+        "farJson" : "replaced string"
+    });
 
 
 
