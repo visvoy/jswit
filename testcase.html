@@ -203,5 +203,39 @@ var remote_json_view = {
 </table>
 
 
+<h3>05. Name collection render</h3>
+<table border="0" cellspacing="0" cellpadding="0" width="97%">
+<tr>
+    <td class="field" valign="top">
+<h5>html</h5>
+<pre>
+&lt;input name="namecoll" size="20" value="value1" />
+&lt;input name="namecoll" size="20" value="value2" />
+</pre>
+    </td>
+    <td class="op" valign="middle">+</td>
+    <td class="field" valign="top"><h5>view</h5>
+<pre>
+var name_coll_view = {
+    "name=namecoll" : "value replaced!"
+};
+</pre>
+    </td>
+    <td class="op" valign="middle">
+        <script>
+            var name_coll_view = {
+                "name=namecoll" : "value replaced!"
+            };
+        </script>
+        <button onclick="swit.render(name_coll_view);">Render</button>
+    </td>
+    <td class="field" valign="top"><h5>result</h5><div class="wrap">
+        <input name="namecoll" size="20" value="value1" />&nbsp;
+        <input name="namecoll" size="20" value="value2" />
+    </div></td>
+</tr>
+</table>
+
+
 </body>
 </html>
