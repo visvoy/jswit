@@ -2,7 +2,7 @@
 
 ## A brief example
 
-html:
+html in your page:
 
     <ul id="userlist">
       <li>Name: %name% , age: %age%</li>
@@ -37,8 +37,46 @@ jswit is wriiten with a native JavaScript, without any js framework dependency, 
 
 ## How jswit works?
 
+Create html page -> ready json view data -> swit.render -> your html page rendered
 
+### Create html page:
 
+    Write web html page without any server side language tag like <?php ?> or <%= %>,
+    Mark DOM element id or name when you want to render e.g. <div id="newsDetail"></div>
+    Use %tagName% for iterate render (refer to "A brief example" above)
 
+### Prepare view data:
+    jswit has only one data type for view rendering: JSON
+    
+    construct view data as below:
+        var viewData = [
+            "tagKey1" : "string to fill in",
+            "tagKey2" : [
+                "iterate string to fill in 1<br />",
+                "iterate string to fill in 2<br />"
+            ],
+            "name=tag3" : {
+                "key1" : "val1",
+                "key2" : "val2"
+            },
+            "farId" : {
+                "url" : "link/to/remote/server/return/html/string"
+            },
+            "farJson" : {
+                "json" : "link/to/remote/server/return/json"
+            },
+        ];
 
+### Render
 
+    swit.render(viewData);
+    
+## What is the view key meaning?
+
+tagKey1: link to any DOM element with id="tagKey1", and replace DOM.innerHTML to view value: "string to fill in", result:
+
+    <div id="tagKey1">string to fill in</div>
+
+tagKey2: link to any DOM element with id="tagKey1", and iterate replace DOM.innerHTML to view value, you will see:
+
+    <div id="tagKey2">iterate string to fill in 1<br />iterate string to fill in 2<br /></div>
