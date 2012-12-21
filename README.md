@@ -32,7 +32,10 @@ you will get:
 
 ## What is jswit?
 
-[jswit.js](https://github.com/visvoy/jswit) is a DOM based JavaScript tempale. [jswit.js](https://github.com/visvoy/jswit) support instant render, remote render and cross domain render.
+[jswit.js](https://github.com/visvoy/jswit) is a DOM based JavaScript template. [jswit.js](https://github.com/visvoy/jswit) support instant render, remote render and cross domain render.
+jswit is wriiten with a native JavaScript, without any js framework dependency, so it's swift and efficient.
+
+## How jswit works?
 
 
 
