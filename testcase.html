@@ -163,5 +163,45 @@ var remote_html_view = {
 </table>
 
 
+<h3>04. Remote json render [run this test on your web server]</h3>
+<table border="0" cellspacing="0" cellpadding="0" width="97%">
+<tr>
+    <td class="field" valign="top">
+<h5>html</h5>
+<pre>
+&lt;div id="remote_json">
+    hello %dataType% %templateName%!
+&lt;/div>
+</pre>
+    </td>
+    <td class="op" valign="middle">+</td>
+    <td class="field" valign="top"><h5>view</h5>
+<pre>
+var remote_json_view = {
+    remote_json : {
+        json : "test-remote-json.js"
+    }
+};
+</pre>
+    </td>
+    <td class="op" valign="middle">
+        <script>
+            var remote_json_view = {
+                remote_json : {
+                    json : "test-remote-json.js"
+                }
+            };
+        </script>
+        <button onclick="swit.render(remote_json_view);">Render</button>
+    </td>
+    <td class="field" valign="top"><h5>result</h5><div class="wrap">
+        <div id="remote_json">
+            hello %dataType% %templateName%!
+        </div>
+    </div></td>
+</tr>
+</table>
+
+
 </body>
 </html>

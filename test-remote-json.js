@@ -1,0 +1,4 @@
+{
+	dataType : "JSON",
+	templateName : "jswit"
+}

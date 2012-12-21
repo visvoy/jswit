@@ -430,7 +430,7 @@ fn={
 			
 			switch(dataType){
 			case 'json':
-				ret=eval(ret);
+				eval('ret='+ret+';');
 			case 'html':
 				option.success.call(this,dom,ret,1);
 				break;
