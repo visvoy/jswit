@@ -426,6 +426,10 @@ fn={
 	
 	// Render [dom] using [view] data
 	renderDom:function(dom,view,recursive,delayScript){
+		if(!dom){
+			return
+		}
+
 		if(typeof recursive=='undefined'){
 			recursive=0;
 		}
@@ -434,7 +438,7 @@ fn={
 			return;
 		}
 		
-		// allow remote view data for the first recursive
+		// 非递归允许执行远程渲染
 		if(recursive<1){
 			if(typeof view.url=='string'){
 				fn.remoteViewData(dom,view.url,view,'html');
