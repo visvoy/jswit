@@ -1,5 +1,7 @@
 # jswit.js - SWIfT template with native JavaScript
 
+> Support browers: IE6+, FireFox 2.0+, Chrome, Safari, Opera
+
 ## A brief example
 
 html in your page:
