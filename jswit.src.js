@@ -434,7 +434,7 @@ fn={
 			return;
 		}
 		
-		// 非递归允许执行远程渲染
+		// allow remote view data for the first recursive
 		if(recursive<1){
 			if(typeof view.url=='string'){
 				fn.remoteViewData(dom,view.url,view,'html');
