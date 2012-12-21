@@ -73,10 +73,35 @@ Create html page -> ready json view data -> swit.render -> your html page render
     
 ## What is the view key meaning?
 
-tagKey1: link to any DOM element with id="tagKey1", and replace DOM.innerHTML to view value: "string to fill in", result:
+tagKey1: find any DOM element with id="tagKey1", and replace DOM.innerHTML to view value: "string to fill in", result:
 
     <div id="tagKey1">string to fill in</div>
 
-tagKey2: link to any DOM element with id="tagKey1", and iterate replace DOM.innerHTML to view value, you will see:
+tagKey2: find any DOM element with id="tagKey2", and iterate replace DOM.innerHTML to view value, you will see:
 
-    <div id="tagKey2">iterate string to fill in 1<br />iterate string to fill in 2<br /></div>
+    <span id="tagKey2">iterate string to fill in 1<br />iterate string to fill in 2<br /></span>
+
+name=tag3: find any DOM elements with name="tag3", and iterate replace DOM.innerHTML to view value, using %tag% replace, result:
+
+    <ul name="tag3">
+        <li>val1</li>
+        <li>val2</li>
+    </ul>
+
+farId: find DOM id="farId", and request remote view data according value of "url", then replace DOM.innerHTML to the responsed html string
+
+farJson: find DOM id="farJson", and request remote view data according value of "json", then replace DOM.innerHTML to the responsed json data
+
+### How to response cross domain json data?
+
+At cross domain side, reponse the swit remote request as below:
+
+    swit.callback([
+        {
+            "farJson" : "replaced string"
+        }
+    ]);
+
+
+
+
