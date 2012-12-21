@@ -11,11 +11,11 @@ html in your page:
 json data:
 
     var view_data = [
-      userlist : {
+      userlist : [
         { name : 'Lily', age : 11 },
         { name : 'Lucy', age : 12 },
         { name : 'LiLei', age : 18 }
-      }
+      ]
     ];
 
 render in js:
