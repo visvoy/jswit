@@ -49,7 +49,7 @@ Create html page -> ready json view data -> swit.render -> your html page render
     jswit has only one data type for view rendering: JSON
     
     construct view data as below:
-        var viewData = [
+        var viewData = {
             "tagKey1" : "string to fill in",
             "tagKey2" : [
                 "iterate string to fill in 1<br />",
@@ -65,7 +65,7 @@ Create html page -> ready json view data -> swit.render -> your html page render
             "farJson" : {
                 "json" : "link/to/remote/server/return/json"
             },
-        ];
+        };
 
 ### Render
 
