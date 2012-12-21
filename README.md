@@ -10,13 +10,13 @@ html:
 
 json data:
 
-    var view_data = {
+    var view_data = [
       userlist : {
         { name : 'Lily', age : 11 },
         { name : 'Lucy', age : 12 },
         { name : 'LiLei', age : 18 }
       }
-    };
+    ];
 
 render in js:
 
@@ -29,3 +29,13 @@ you will get:
       <li>Name: Lucy , age: 12</li>
       <li>Name: LiLei , age: 13</li>
     </ul>
+
+## What is jswit?
+
+[jswit.js](https://github.com/visvoy/jswit) is a DOM based JavaScript tempale. [jswit.js](https://github.com/visvoy/jswit) support instant render, remote render and cross domain render.
+
+
+
+
+
+
