@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>jswit testcase</title>
+<script type="text/javascript" src="jswit.src.js"></script>
+<!-- <script type="text/javascript" src="jswit.min.js"></script> -->
+<style type="text/css">
+*{margin:0;padding:0}
+body{
+    font-size:14px;
+    color:#333;
+    margin:20px;
+    min-width:980px;
+}
+h2{font-size:24px;margin:0}
+h3{font-size:18px;margin:0;padding:32px 0 6px 0;color:#a00;}
+h5{
+    padding:6px 10px;
+    font-size:14px;
+    background:#eee;
+    font-weight:bold;
+}
+pre{
+    margin:0;
+    padding:12px;
+    font-family:Consolas, 'Liberation Mono', Courier, monospace;
+}
+button{
+    height:26px;
+    padding-left:6px;
+    padding-right:6px;
+}
+.op{
+   padding:0 10px;
+   font-size:22px;
+   text-align:center;
+}
+.field{
+    border:1px solid #aaa;
+    border-radius:3px;
+    width:30%;
+}
+.wrap{
+    padding:12px;
+}
+ul{
+    margin-left:20px;
+}
+</style>
+</head>
+<body>
+<h2>jswit.js testcase @ <a href="https://github.com/visvoy/jswit" target="_blank">github / visvoy / jswit</a></h2>
+
+
+<h3>01. Basic render</h3>
+<table border="0" cellspacing="0" cellpadding="0" width="97%">
+<tr>
+    <td class="field" valign="top">
+<h5>html</h5>
+<pre>
+&lt;span id="basic_span">&lt;/span>
+</pre>
+    </td>
+    <td class="op" valign="middle">+</td>
+    <td class="field" valign="top"><h5>view</h5>
+<pre>
+var basic_view = {
+    basic_span : "hello jswit!"
+}
+</pre>
+    </td>
+    <td class="op" valign="middle">
+        <script>
+            var basic_view = {
+                basic_span : "hello jswit!"
+            }
+        </script>
+        <button onclick="swit.render(basic_view);">Render</button>
+    </td>
+    <td class="field" valign="top"><h5>result</h5><div class="wrap">
+        <span id="basic_span"></span>
+    </div></td>
+</tr>
+</table>
+
+
+<h3>02. Iterate render</h3>
+<table border="0" cellspacing="0" cellpadding="0" width="97%">
+<tr>
+    <td class="field" valign="top">
+<h5>html</h5>
+<pre>
+&lt;ul id="iterate">
+    &lt;li>%name% is %age%&lt;/li>
+&lt;/ul>
+</pre>
+    </td>
+    <td class="op" valign="middle">+</td>
+    <td class="field" valign="top"><h5>view</h5>
+<pre>
+var iterate_view = {
+    iterate : [
+        { name : "Lily", age : 11 },
+        { name : "Lucy", age : 12 }
+    ]
+};
+</pre>
+    </td>
+    <td class="op" valign="middle">
+        <script>
+            var iterate_view = {
+                iterate : [
+                    { name : "Lily", age : 11 },
+                    { name : "Lucy", age : 12 }
+                ]
+            };
+        </script>
+        <button onclick="swit.render(iterate_view);">Render</button>
+    </td>
+    <td class="field" valign="top"><h5>result</h5><div class="wrap">
+        <ul id="iterate">
+            <li>%name% is %age%</li>
+        </ul>
+    </div></td>
+</tr>
+</table>
+
+
+<h3>03. Remote html string render [run this test on your web server]</h3>
+<table border="0" cellspacing="0" cellpadding="0" width="97%">
+<tr>
+    <td class="field" valign="top">
+<h5>html</h5>
+<pre>
+&lt;div id="remote_html">&lt;/div>
+</pre>
+    </td>
+    <td class="op" valign="middle">+</td>
+    <td class="field" valign="top"><h5>view</h5>
+<pre>
+var remote_html_view = {
+    remote_html : {
+        url : "remote_html.js"
+    }
+};
+</pre>
+    </td>
+    <td class="op" valign="middle">
+        <script>
+            var remote_html_view = {
+                remote_html : {
+                    url : "test-remote-html.js"
+                }
+            };
+        </script>
+        <button onclick="swit.render(remote_html_view);">Render</button>
+    </td>
+    <td class="field" valign="top"><h5>result</h5><div class="wrap">
+        <div id="remote_html"></div>
+    </div></td>
+</tr>
+</table>
+
+
+</body>
+</html>

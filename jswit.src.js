@@ -4,7 +4,7 @@
 // version 1.0
 // visvoy@gmail.com
 // 
-// updated 2012-12-19
+// updated 2012-12-21
 //
 // 
 // SUPPORT ELEMENTS // 
@@ -68,14 +68,6 @@ fn={
 	// Test if ob is an object or array
 	isObjectOrArray:function(ob){
 		return (typeof ob=="object"||typeof ob=="array" ? true : false);
-	},
-	
-	// Test if ob is an array composited by numeric keys
-	isNumberKeyArray:function(ob){
-		if(typeof ob[0]!='undefined'||typeof ob[1]!='undefined'){
-			return true;
-		}
-		return false;
 	},
 	
 	// Replace tag with value
@@ -295,36 +287,61 @@ fn={
 		}
 	},
 	
+	// Set DOM attribute
+	renderDomAttr:function(ob,attr){
+		if(fn.isObjectOrArray(attr)){
+			var k,j;
+			for(k in attr){
+				if(k.toLowerCase()!='css'||!fn.isObjectOrArray(attr[k])){
+					ob.setAttribute(k,attr[k]);
+				}else{
+					for(j in attr[k]){
+						ob.style[j]=attr[k][j];
+					}
+				}
+			}
+		}
+	},
+	
 	// Render other DOM element
 	renderDomCommon:function(ob,view,delayScript){
 		if(!fn.isObjectOrArray(view)){
 			fn.html(ob,view,delayScript);
 			return;
 		}
-		var k,j,len,src,tmp,isIterate,htm="";
-		src=ob.getAttribute('switSource')||"";
-		if(fn.isNumberKeyArray(view)){
-			for(k in view){
-				if(parseInt(k)==NaN){
-					continue;
-				}
+		var k,j,len,tmp,haveTag,htm="",src=ob.getAttribute('switSource')||"",leftover={};
+		
+		// Replace iterate innerHTML by numeric keyName
+		for(k in view){
+			if(!isNaN(parseInt(k))){
 				if(!fn.isObjectOrArray(view[k])){
 					htm+=view[k];
 				}else{
 					tmp=src;
-					for(var j in view[k]){
+					for(j in view[k]){
 						tmp=fn.replace(j,view[k][j],tmp);
 					}
 					htm+=tmp;
 				}
+			}else{
+				leftover[k]=view[k];
 			}
-			fn.html(ob,htm,delayScript);
-			return;
 		}
-		for(k in view){
-			src=fn.replace(k,view[k],src);
+		
+		// Replace left over view data
+		if(""!=htm||(src.indexOf(config.tagBegin)<0&&src.indexOf(config.tagEnd)<0)){
+			// When iterate replaced or DOM source content doesn't contain swit tag
+			// we set DOM attribute/style
+			fn.renderDomAttr(ob,leftover);
+		}else{
+			// otherwise replace innerHTML once
+			htm=src;
+			for(k in leftover){
+				htm=fn.replace(k,leftover[k],htm);
+			}
 		}
-		fn.html(ob,src,delayScript);
+
+		fn.html(ob,htm,delayScript);
 	},
 	
 	// Check [url] is a cross domain link or inner link
@@ -351,7 +368,8 @@ fn={
 		scriptObject.type='text/javascript';
 		scriptObject.defer=true;
 		scriptObject.id=sid;
-		void(body.appendChild(scriptObject));
+		body.appendChild(scriptObject);
+		// void(body.appendChild(scriptObject));
 	},
 	
 	// Create inner site xml http request object
@@ -438,7 +456,7 @@ fn={
 			return;
 		}
 		
-		// 非递归允许执行远程渲染
+		// try pickup remote view data in the first recursive
 		if(recursive<1){
 			if(typeof view.url=='string'){
 				fn.remoteViewData(dom,view.url,view,'html');
