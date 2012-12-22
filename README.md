@@ -66,7 +66,7 @@ Create html page -> ready json view data -> swit.render -> your html page render
             },
             "farJson" : {
                 "json" : "link/to/remote/server/return/json"
-            },
+            }
         };
 
 ### Render
