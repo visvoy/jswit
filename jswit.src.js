@@ -4,7 +4,7 @@
 // version 1.0
 // visvoy@gmail.com
 // 
-// updated 2012-12-21
+// updated 2012-12-29
 //
 // 
 // SUPPORT ELEMENTS // 
@@ -26,26 +26,45 @@ ie6=ie&&!w.XMLHttpRequest,
 // ie8=ie&&!!d.documentMode,
 // ie7=ie&&!ie6&&!ie8,
 
-// Default settings
-defaults={
+// Swit configuration
+config={
 	debug:false,
 	tagBegin:'\%',
 	tagEnd:'\%',
 	maxRecursive:1000
 },
 
-// Swit configuration
-config,
-
 // Delay casting javascript pool
-scripts=[],
+scripts=[];
+
+// Private helpers
+
+// Check if value [v] is undefined
+function no(v){
+	return typeof v=="undefined";
+}
+
+// Get element [k] DOM object
+function e(k){
+	return (typeof k=='string')?d.getElementById(k):k;
+}
+
+// Get element name DOM objects from DOM ob
+function en(k,ob){
+	return e(ob||d).getElementsByName(k);
+}
+
+// Get element tag name DOM objects from DOM ob
+function et(k,ob){
+	return e(ob||d).getElementsByTagName(k);
+}
 
 // Swit private methods
-fn={
+var fn={
 	// Write log message to console window
 	// this method works only when swit.setConfig('debug', true)
 	log:function(msg){
-		if(typeof console!='undefined'&&config.debug){
+		if(!no(console)){
 			console.log(msg);
 		}
 	},
@@ -58,6 +77,11 @@ fn={
 	// Judges ob.nodeName equals to nodeStr or not
 	nodeName:function(ob,nodeStr){
 		return (ob.nodeName && ob.nodeName.toUpperCase() == nodeStr.toUpperCase());
+	},
+
+	// Get tag name if [k] starts with "name="
+	nameOf:function(k){
+		return (k.toLowerCase().indexOf('name=')>-1?k.substr(5):null);
 	},
 	
 	// Remove script content from str
@@ -130,6 +154,9 @@ fn={
 			context = context.ownerDocument || context[0] && context[0].ownerDocument || d;
 		}
 		// Fix "XHTML"-style tags in all browsers
+		if(typeof elem == 'number'){
+			elem=''+elem;
+		}
 		elem = elem.replace(/(<(\w+)[^>]*?)\/>/g, function(all, front, tag){
 			return tag.match(/^(abbr|br|col|img|input|link|meta|param|hr|area|embed)$/i) ?
 				all : front + "></" + tag + ">";
@@ -220,7 +247,7 @@ fn={
 		var i,elem,domjs=[],elems=fn.stringToDom(replaceText);
 		
 		if ( fn.nodeName( ob, "table" ) && fn.nodeName( elems[0], "tr" ) ){
-			ob = ob.getElementsByTagName("tbody")[0] || ob.appendChild( ob.ownerDocument.createElement("tbody") );
+			ob = et("tbody",ob)[0] || ob.appendChild( ob.ownerDocument.createElement("tbody") );
 		}
 
 		for(i in elems){
@@ -255,23 +282,26 @@ fn={
 			}
 		}
 	},
+
+	// Initialize base DOM data for swit
+	initDom:function(ob,src){
+		ob.setAttribute('switInit',true);
+		ob.setAttribute('switSource',src);
+	},
 	
 	// Common DOM element initialize
 	initDomCommon:function(ob){
-		ob.setAttribute('switInit',true);
-		ob.setAttribute('switSource',ob.innerHTML);
+		fn.initDom(ob, ob.innerHTML);
 	},
 	
 	// <INPUT> element initialize
 	initDomInput:function(ob){
-		ob.setAttribute('switInit',true);
-		ob.setAttribute('switSource',ob.getAttribute('value'));
+		fn.initDom(ob, ob.getAttribute('value'));
 	},
 	
 	// <SELECT> element initialize
 	initDomSelect:function(ob){
-		ob.setAttribute('switInit',true);
-		ob.setAttribute('switSource',ob.innerHTML.replace(" selected",""));
+		fn.initDom(ob, ob.innerHTML.replace(" selected",""));
 	},
 	
 	// Render <INPUT> element
@@ -358,11 +388,11 @@ fn={
 	
 	// Require a cross domain script
 	requireCrossDomain:function(url){
-		var body=d.getElementsByTagName('body')[0],
+		var body=et('body')[0],
 			sid='_switJsonp'+Math.random(),
 			scriptObject=d.createElement('script');
-		if(d.getElementById(sid)){
-			body.removeChild(d.getElementById(sid));
+		if(e(sid)){
+			body.removeChild(e(sid));
 		}
 		scriptObject.src=url;
 		scriptObject.type='text/javascript';
@@ -386,6 +416,108 @@ fn={
 		fn.log('can not create xml http request');
 	},
 	
+	// Convert form data object to POST string
+	toHttpParam:function(a){
+		var s=[],i,j;
+		if(a.constructor == Array){
+			for(i=0;i<a.length;i++){
+				s.push(encodeURIComponent(a[i].name) + "=" + encodeURIComponent(a[i].value));
+			}
+		}else{
+			for(j in a){
+				if(a[j]&&a[j].constructor == Array){
+					for(i=0;i<a[j].length;i++){
+						s.push(encodeURIComponent(j) + "=" + encodeURIComponent(a[j][i]));
+					}
+				}else{
+					s.push(encodeURIComponent(j) + "=" + encodeURIComponent(a[j]));
+				}
+			}
+		}
+		return s.join("&").replace(/%20/g, "+");
+	},
+	
+	// Collection form data from DOMs
+	toFormData:function(a){
+		var s={},i,j,t,ob,fm=[];
+		if(a.constructor == String){
+			if(t=fn.nameOf(a)){
+				ob=en(t);
+				for(i=0;i<ob.length;i++){
+					fm.push(et('input',ob[i]));
+					fm.push(et('textarea',ob[i]));
+					fm.push(et('select',ob[i]));
+				}
+			}else{
+				ob=e(a);
+				if(ob){
+					fm.push(et('input',ob));
+					fm.push(et('textarea',ob));
+					fm.push(et('select',ob));
+				}
+			}
+			if(fm.length<1){
+				return s;
+			}
+			a=[];
+			for(i=0;i<fm.length;i++){
+				for(j=0;j<fm[i].length;j++){
+					a.push(fm[i][j]);
+				}
+			}
+			fm=[];
+		}
+		for(j=0;j<a.length;j++){
+			if(typeof a[j]=="string"){
+				if(t=fn.nameOf(a[j])){
+					ob=en(t);
+					for(i=0;i<ob.length;i++){
+						fm.push(ob[i]);
+					}
+				}else{
+					fm.push(e(a[j]));
+				}
+			}else{
+				fm.push(a[j]);
+			}
+		}
+		a=[];
+		for(j=0;j<fm.length;j++){
+			ob=fm[j];
+			if(no(ob.nodeName)||no(ob.name)||!ob.name){
+				continue;
+			}
+			switch(ob.nodeName.toLowerCase()){
+			case 'select':case 'textarea':
+				break;
+			case 'input':
+				if(no(ob.type)){
+					continue;
+				}
+				t=ob.type.toLowerCase();
+				if('text'==t||'password'==t||'hidden'==t){
+					break;
+				}
+				if(('radio'==t||'checkbox'==t)&&ob.checked){
+					break;
+				}
+				continue;
+			}
+			t=typeof s[ob.name];
+            switch(t.toLowerCase()){
+            case "undefined":
+                s[ob.name]=ob.value;
+                break;
+            case "array":
+				s[ob.name].push(ob.value);
+                break;
+            default:
+				s[ob.name]=[s[ob.name],ob.value];
+            }
+		}
+		return s;
+	},
+	
 	// Require remote view data
 	// this method supports both inner site and cross domain request
 	remoteViewData:function(dom,url,option,dataType){
@@ -399,6 +531,12 @@ fn={
 		}
 		if(!option.method){
 			option.method='GET';
+		}
+		if(!option.form){
+			option.form=null;
+		}else{
+			option.method='POST';
+			option.form=fn.toHttpParam(fn.toFormData(option.form));
 		}
 		if(typeof option.success!='function'){
 			option.success=fn.renderDom;
@@ -428,18 +566,35 @@ fn={
 			
 			var ret=fn.trim(req.responseText);
 			
+			if(('json'==dataType||'jsonlink'==dataType)&&ret.substr(0,1)!='['&&ret.substr(0,1)!='{'){
+				option.error.call(this,"invalid remote json from url: \n"+url+" \nserver said: \n"+ret);
+				return;
+			}
+			
 			switch(dataType){
 			case 'json':
 				eval('ret='+ret+';');
 			case 'html':
 				option.success.call(this,dom,ret,1);
 				break;
+			case 'jsonlink':
+				eval('ret='+ret+';');
+				option.success.call(this,ret,1);
+				break;
 			default:
 				option.error.call(this,"invalid remote data type of "+dataType);
 			}
 		}
+		
+		// Send ajax request
 		req.open(option.method, url);
-		req.send(null);
+		try{
+			req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+			if('POST'==option.method){
+				req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			}
+		}catch(e){}
+		req.send(option.form);
 	},
 	
 	// Render [dom] using [view] data
@@ -448,7 +603,7 @@ fn={
 			return
 		}
 
-		if(typeof recursive=='undefined'){
+		if(no(recursive)){
 			recursive=0;
 		}
 		if(recursive>config.maxRecursive){
@@ -502,21 +657,25 @@ fn={
 			return;
 		}
 		
-		var nameObjects,i,k;
+		var nameObjects,i,k,t;
 		scripts=[];
 		for(k in viewData){
-			fn.log('render start for '+k);
-			if(k.toLowerCase().indexOf('name=')!=0){
-				// render for ID
-				fn.renderDom(d.getElementById(k),viewData[k],recursive,true);
-			}else{
+			if(config.debug){
+				fn.log('render start for '+k);
+			}
+			if(t=fn.nameOf(k)){
 				// render for names
-				nameObjects=d.getElementsByName(k.substr(5));
+				nameObjects=en(t);
 				for(i=0;i<nameObjects.length;i++){
 					fn.renderDom(nameObjects[i],viewData[k],recursive,true);
 				}
+			}else{
+				// render for ID
+				fn.renderDom(e(k),viewData[k],recursive,true);
 			}
-			fn.log('render end for '+k);
+			if(config.debug){
+				fn.log('render end for '+k);
+			}
 		}
 		
 		// Run scripts and clear the pool
@@ -528,14 +687,11 @@ fn={
 	}
 };
 
-// Init configuration
-config=defaults;
-
 // Publish Swit
 w.swit={
 	// Get config [key] value
 	config:function(key){
-		return(typeof config[key]=="undefined"?u:config[key]);
+		return(no(config[key])?u:config[key]);
 	},
 	
 	// Set config [key] to [val]
@@ -552,6 +708,11 @@ w.swit={
 	// Callback when cross domain jsonp request responsed
 	callback:function(json){
 		fn.render(json,1);
+	},
+	
+	// Require remote json data, then render current page
+	remoteRender:function(jsonLink,formData){
+		fn.remoteViewData({},jsonLink,{success:fn.render,form:formData},'jsonlink');
 	},
 	
 	// Render DOM elements using json view data
